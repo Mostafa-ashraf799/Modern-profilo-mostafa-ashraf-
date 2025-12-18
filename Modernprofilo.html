@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصطفى أشرف - مطور واجهات أمامية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(0, 255, 170, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 15%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 180px;
+            height: 180px;
+            top: 65%;
+            right: 75%;
+            animation-delay: 3s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 90px;
+            height: 90px;
+            top: 85%;
+            right: 20%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+            }
+        }
+
+        nav {
+            background: rgba(10, 10, 10, 0.95);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 255, 170, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 170, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffaa, #00cc88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: #00ffaa;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #00ffaa;
+        }
+
+        .nav-links a.active {
+            color: #00ffaa;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: #e0e0e0;
+            font-size: 18px;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        .social-links a:hover {
+            color: #00ffaa;
+            transform: translateY(-2px);
+        }
+
+        /* إخفاء جميع الأقسام افتراضياً */
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            min-height: 80vh;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* أنيميشن للظهور */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page.active {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* تصميم الصفحة الرئيسية */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 170, 0.15) 0%, transparent 50%);
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        .terminal-container {
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .terminal-window {
+            background: rgba(20, 20, 30, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 100%;
+        }
+
+        .terminal-header {
+            background: rgba(30, 30, 40, 0.95);
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .terminal-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27c93f; }
+
+        .terminal-title {
+            color: #b0b0b0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .terminal-content {
+            padding: 60px;
+        }
+
+        .terminal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .profile-section {
+            text-align: center;
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 40px;
+        }
+
+        .profile-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ffaa, #00cc88, #00ffaa);
+            animation: rotate 6s linear infinite;
+            filter: blur(30px);
+            opacity: 0.7;
+        }
+
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .profile-image {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            border: 4px solid #00ffaa;
+            object-fit: cover;
+            box-shadow: 0 0 50px rgba(0, 255, 170, 0.6);
+            transition: all 0.5s;
+            z-index: 2;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 80px rgba(0, 255, 170, 0.9);
+        }
+
+        .content-section {
+            text-align: right;
+        }
+
+        .greeting {
+            font-size: 22px;
+            color: #00ffaa;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #00ffaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: flex-end;
+        }
+
+        .badge {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid;
+        }
+
+        .badge.available {
+            background: rgba(0, 255, 170, 0.1);
+            border-color: #00ffaa;
+            color: #00ffaa;
+        }
+
+        .badge.open {
+            background: rgba(138, 43, 226, 0.1);
+            border-color: #8a2be2;
+            color: #bb86fc;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .role {
+            font-size: 36px;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #b0b0b0;
+            margin-bottom: 35px;
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .tech-badge {
+            padding: 14px 26px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .tech-badge:hover {
+            background: rgba(0, 255, 170, 0.1);
+            border-color: #00ffaa;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 170, 0.2);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 18px 42px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            background: #00ffaa;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 255, 170, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: #00ffaa;
+            color: #00ffaa;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 255, 170, 0.2);
+        }
+
+        /* تصميم صفحة المهارات */
+        .skills-page {
+            padding: 80px 40px;
+        }
+
+        .section {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            margin-bottom: 60px;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff, #00ffaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .skill-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 170, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .skill-card:hover::before {
+            opacity: 1;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ffaa;
+            box-shadow: 0 20px 40px rgba(0, 255, 170, 0.2);
+        }
+
+        .skill-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #00ffaa;
+            transition: transform 0.3s;
+        }
+
+        .skill-card:hover .skill-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .skill-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .skill-card p {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        .about-content {
+            padding: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #e0e0e0;
+            text-align: right;
+        }
+
+        /* تصميم صفحة المشاريع */
+        .projects-page {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+        }
+
+        .redirect-container {
+            background: rgba(20, 20, 30, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .redirect-icon {
+            font-size: 80px;
+            color: #00ffaa;
+            margin: 30px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .redirect-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #00ffaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .redirect-message {
+            font-size: 18px;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .github-link {
+            display: inline-block;
+            background: #00ffaa;
+            color: #0a0a0a;
+            padding: 15px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .github-link:hover {
+            background: #00cc88;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 170, 0.4);
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #00ffaa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .countdown {
+            font-size: 24px;
+            color: #00ffaa;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        /* تصميم صفحة التواصل */
+        .contact-page {
+            padding: 80px 40px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .contact-card:hover {
+            background: rgba(0, 255, 170, 0.05);
+            border-color: #00ffaa;
+            transform: translateX(-5px);
+        }
+
+        .contact-icon {
+            font-size: 32px;
+            color: #00ffaa;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .contact-info h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #00ffaa;
+        }
+
+        .contact-info p {
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: rgba(0, 255, 170, 0.1);
+            color: #00ffaa;
+            border: 2px solid #00ffaa;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #00ffaa;
+            color: #0a0a0a;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 170, 0.3);
+        }
+
+        footer {
+            background: rgba(10, 10, 10, 0.95);
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+
+        footer p {
+            color: #b0b0b0;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .menu-toggle span {
+            width: 28px;
+            height: 3px;
+            background: #00ffaa;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 1200px) {
+            .terminal-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .profile-section {
+                order: 1;
+            }
+            
+            .content-section {
+                order: 2;
+                text-align: center;
+            }
+            
+            .status-badges,
+            .tech-stack,
+            .cta-buttons {
+                justify-content: center;
+            }
+            
+            .profile-image-container {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .profile-image {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .profile-glow {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 56px;
+            }
+            
+            .role {
+                font-size: 32px;
+            }
+            
+            .section-title {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                padding: 30px;
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .social-links {
+                flex-direction: row;
+            }
+
+            .hero, .projects-page, .skills-page, .contact-page {
+                padding: 40px 20px;
+            }
+            
+            .terminal-content {
+                padding: 40px 20px;
+            }
+            
+            .hero-title {
+                font-size: 42px;
+            }
+            
+            .role {
+                font-size: 28px;
+            }
+            
+            .profile-image-container {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .profile-image {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .profile-glow {
+                width: 260px;
+                height: 260px;
+            }
+
+            .btn {
+                padding: 16px 32px;
+                font-size: 16px;
+            }
+            
+            .floating-element {
+                display: none;
+            }
+            
+            .redirect-container {
+                padding: 40px 20px;
+            }
+            
+            .redirect-title {
+                font-size: 28px;
+            }
+            
+            .redirect-message {
+                font-size: 16px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="showPage('home')">مصطفى أشرف</div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a onclick="showPage('home')" class="active">الرئيسية</a></li>
+                <li><a onclick="showPage('skills')">المهارات</a></li>
+                <li><a onclick="showPage('projects')">المشاريع</a></li>
+                <li><a onclick="showPage('contact')">تواصل</a></li>
+                <div class="social-links">
+                    <a href="https://github.com/Mostafa-ashraf799" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/مصطفى-اشرف-الدعوشي-74a434358" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a onclick="showPage('contact')"><i class="fas fa-file-alt"></i></a>
+                </div>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="home-page" class="page active">
+        <section class="hero">
+            <div class="terminal-container">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="terminal-title">مصطفى أشرف - محفظة المطور</div>
+                        <div></div>
+                    </div>
+                    
+                    <div class="terminal-content">
+                        <div class="terminal-grid">
+                            <!-- القسم الأول: الصورة الشخصية -->
+                            <div class="profile-section">
+                                <div class="profile-image-container">
+                                    <div class="profile-glow"></div>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="مصطفى أشرف" class="profile-image">
+                                </div>
+                            </div>
+                            
+                            <!-- القسم الثاني: المحتوى النصي والأزرار -->
+                            <div class="content-section">
+                                <div class="greeting">مرحباً، أنا</div>
+                                <h1 class="hero-title">مصطفى أشرف</h1>
+                                
+                                <div class="status-badges">
+                                    <div class="badge available">
+                                        <span class="status-dot"></span>
+                                        متاح للعمل الحر
+                                    </div>
+                                    <div class="badge open">
+                                        <span class="status-dot"></span>
+                                        منفتح على الفرص
+                                    </div>
+                                </div>
+
+                                <div class="role">مطور واجهات أمامية</div>
+                                
+                                <p class="description">
+                                    أحب البرمجة والتعلم وبناء أشياء حقيقية تعمل، استكشاف التقنيات الجديدة، والقهوة.
+                                </p>
+
+                                <div class="tech-stack">
+                                    <div class="tech-badge">Next.js</div>
+                                    <div class="tech-badge">React.js</div>
+                                    <div class="tech-badge">TypeScript</div>
+                                </div>
+
+                                <div class="cta-buttons">
+                                    <button onclick="showPage('contact')" class="btn btn-primary">تواصل معي</button>
+                                    <button onclick="showPage('projects')" class="btn btn-secondary">استعرض المشاريع</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- صفحة المهارات -->
+    <div id="skills-page" class="page">
+        <section class="skills-page">
+            <div class="section">
+                <h2 class="section-title">مهاراتي التقنية</h2>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <i class="fab fa-python skill-icon"></i>
+                        <h3>برمجة Python</h3>
+                        <p>تطوير تطبيقات وأنظمة متقدمة باستخدام بايثون وأطر عمل Django وFlask</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-mobile-alt skill-icon"></i>
+                        <h3>تطبيقات الهواتف</h3>
+                        <p>تصميم وتطوير تطبيقات الأندرويد و iOS باستخدام Flutter وReact Native</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-code skill-icon"></i>
+                        <h3>تطوير الويب</h3>
+                        <p>بناء مواقع ويب احترافية متكاملة باستخدام HTML5, CSS3, JavaScript وأطر عمل حديثة</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-shield-alt skill-icon"></i>
+                        <h3>الأمن السيبراني</h3>
+                        <p>حماية الأنظمة وتأمين البيانات والشبكات باستخدام أفضل الممارسات الأمنية</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-robot skill-icon"></i>
+                        <h3>برمجة الروبوتات</h3>
+                        <p>تطوير أنظمة الروبوتات الذكية باستخدام Arduino وRaspberry Pi</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fab fa-google skill-icon"></i>
+                        <h3>خدمات Google</h3>
+                        <p>التكامل مع خدمات جوجل السحابية وFirebase وواجهات برمجة التطبيقات</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-brain skill-icon"></i>
+                        <h3>الذكاء الاصطناعي</h3>
+                        <p>تطوير أنظمة ذكية باستخدام TensorFlow وPyTorch ومعالجة اللغة الطبيعية</p>
+                    </div>
+                    <div class="skill-card">
+                        <i class="fas fa-coins skill-icon"></i>
+                        <h3>العملات الرقمية</h3>
+                        <p>خبرة متقدمة في التعدين وتحليل العملات المشفرة والاستثمار في الأسواق الرقمية</p>
+                    </div>
+                </div>
+                
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="terminal-title">نبذة عني</div>
+                        <div></div>
+                    </div>
+                    <div class="about-content">
+                        <p class="about-text">
+                            مطور برمجيات شغوف بالتكنولوجيا والابتكار، أسعى دائماً لتطوير حلول تقنية متقدمة. ولدت في 1 أغسطس 2009، وأمتلك خبرة واسعة في مجالات البرمجة والأمن السيبراني والعملات الرقمية. أعمل على تطوير مشاريع متنوعة تشمل تطبيقات الويب والهواتف الذكية، مع التركيز على الأمن والكفاءة.
+                        </p>
+                        <div style="text-align: left;">
+                            <button onclick="showPage('home')" class="back-btn">← العودة للرئيسية</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- صفحة المشاريع -->
+    <div id="projects-page" class="page">
+        <section class="projects-page">
+            <div class="redirect-container">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-title">إعادة التوجيه إلى GitHub</div>
+                    <div></div>
+                </div>
+
+                <div style="padding: 40px 20px;">
+                    <i class="fab fa-github redirect-icon"></i>
+                    
+                    <h2 class="redirect-title">مشاريعي على GitHub</h2>
+                    
+                    <p class="redirect-message">
+                        سيتم فتح صفحة GitHub الخاصة بي لعرض جميع مشاريعي البرمجية في علامة تبويب جديدة.
+                    </p>
+                    
+                    <div class="loader" id="loader"></div>
+                    
+                    <div class="countdown" id="countdown"></div>
+                    
+                    <a href="https://github.com/Mostafa-ashraf799" target="_blank" class="github-link" id="githubLink">
+                        <i class="fab fa-github"></i> الانتقال إلى GitHub الآن
+                    </a>
+                    
+                    <div style="margin-top: 40px;">
+                        <button onclick="showPage('home')" class="back-btn">
+                            <i class="fas fa-arrow-right"></i> العودة إلى الصفحة الرئيسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- صفحة التواصل -->
+    <div id="contact-page" class="page">
+        <section class="contact-page">
+            <div class="section">
+                <h2 class="section-title">تواصل معي</h2>
+                
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="terminal-title">طرق التواصل</div>
+                        <div></div>
+                    </div>
+                    
+                    <div class="contact-grid">
+                        <a href="tel:01227401622" class="contact-card">
+                            <i class="fas fa-phone contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>الهاتف</h4>
+                                <p>01227401622</p>
+                            </div>
+                        </a>
+                        <a href="https://wa.me/201227401622" target="_blank" class="contact-card">
+                            <i class="fab fa-whatsapp contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>واتساب</h4>
+                                <p>01227401622</p>
+                            </div>
+                        </a>
+                        <a href="https://t.me/malimalimalih" target="_blank" class="contact-card">
+                            <i class="fab fa-telegram contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>تليجرام</h4>
+                                <p>@malimalimalih</p>
+                            </div>
+                        </a>
+                        <a href="mailto:maldwshy000@gmail.com" class="contact-card">
+                            <i class="fas fa-envelope contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>البريد الإلكتروني</h4>
+                                <p>maldwshy000@gmail.com</p>
+                            </div>
+                        </a>
+                        <a href="https://github.com/Mostafa-ashraf799" target="_blank" class="contact-card">
+                            <i class="fab fa-github contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>GitHub</h4>
+                                <p>Mostafa-ashraf799</p>
+                            </div>
+                        </a>
+                        <a href="https://www.facebook.com/share/1A4Dvfu3PN/" target="_blank" class="contact-card">
+                            <i class="fab fa-facebook contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>فيسبوك</h4>
+                                <p>مصطفى أشرف</p>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/مصطفى-اشرف-الدعوشي-74a434358" target="_blank" class="contact-card">
+                            <i class="fab fa-linkedin contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>LinkedIn</h4>
+                                <p>مصطفى أشرف الدعوشي</p>
+                            </div>
+                        </a>
+                        <a href="https://84510550481345.sarhne.com" target="_blank" class="contact-card">
+                            <i class="fas fa-comment-dots contact-icon"></i>
+                            <div class="contact-info">
+                                <h4>صراحة</h4>
+                                <p>أرسل رسالة مجهولة</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 0 50px 50px;">
+                        <button onclick="showPage('home')" class="back-btn">← العودة للرئيسية</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 مصطفى أشرف. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script>
+        // متغيرات عامة
+        let redirectTimer;
+        let countdown = 5;
+        
+        // وظيفة تبديل القائمة على الهواتف
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+        
+        // وظيفة عرض صفحة معينة
+        function showPage(pageId) {
+            // إخفاء جميع الصفحات
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // إزالة النشاط من جميع روابط التنقل
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // إضافة النشاط للرابط المحدد
+            document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
+            
+            // إغلاق القائمة على الهواتف
+            if (window.innerWidth <= 768) {
+                document.getElementById('navLinks').classList.remove('active');
+            }
+            
+            // عرض الصفحة المطلوبة
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            
+            // إذا كانت صفحة المشاريع، ابدأ العداد
+            if (pageId === 'projects') {
+                startCountdown();
+            } else {
+                // إلغاء العداد إذا كان يعمل
+                if (redirectTimer) {
+                    clearInterval(redirectTimer);
+                }
+                // إخفاء المحمل
+                const loader = document.getElementById('loader');
+                if (loader) loader.style.display = 'none';
+                // إعادة تعيين العداد
+                const countdownElement = document.getElementById('countdown');
+                if (countdownElement) countdownElement.textContent = '';
+                countdown = 5;
+            }
+            
+            // التمرير للأعلى
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // وظيفة بدء العداد التنازلي لصفحة المشاريع
+        function startCountdown() {
+            const loader = document.getElementById('loader');
+            const countdownElement = document.getElementById('countdown');
+            const githubLink = document.getElementById('githubLink');
+            
+            // إظهار المحمل
+            if (loader) loader.style.display = 'block';
+            
+            // إعادة تعيين العداد
+            countdown = 5;
+            if (countdownElement) countdownElement.textContent = `سيتم فتح GitHub خلال: ${countdown}`;
+            
+            // بدء العداد
+            redirectTimer = setInterval(function() {
+                countdown--;
+                if (countdownElement) countdownElement.textContent = `سيتم فتح GitHub خلال: ${countdown}`;
+                
+                if (countdown <= 0) {
+                    clearInterval(redirectTimer);
+                    if (loader) loader.style.display = 'none';
+                    if (countdownElement) countdownElement.textContent = 'يتم فتح GitHub الآن...';
+                    
+                    // فتح GitHub في علامة تبويب جديدة
+                    setTimeout(() => {
+                        window.open('https://github.com/Mostafa-ashraf799', '_blank');
+                    }, 500);
+                }
+            }, 1000);
+        }
+        
+        // عند تحميل الصفحة، تأكد من أن الصفحة الرئيسية معروضة
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home');
+        });
+        
+        // عند النقر على الشعار، عرض الصفحة الرئيسية
+        document.querySelector('.logo').addEventListener('click', function() {
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
