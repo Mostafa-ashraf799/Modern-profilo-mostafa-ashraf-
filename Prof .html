@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصطفى أشرف | مطور برمجيات خبير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #05080b;
+            --card-bg: rgba(10, 15, 20, 0.8);
+            --cyan: #00d4ff;
+            --purple: #7c3aed;
+            --text: #cbd5e1;
+            --white: #f8fafc;
+            --accent: #00ff88;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Cairo', sans-serif; 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 3D Robot Background Control */
+        .robot-scene {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: 1; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .robot-scene img {
+            width: 450px;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.4));
+            opacity: 0.7;
+        }
+
+        /* Overlay Grid */
+        .grid {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: 0;
+        }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+        .logo { font-family: 'Rajdhani'; font-weight: 700; color: var(--cyan); font-size: 26px; letter-spacing: 2px; }
+        .status { font-size: 13px; color: var(--accent); background: rgba(0,255,136,0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--accent); }
+
+        section { position: relative; min-height: 100vh; padding: 120px 10%; z-index: 2; }
+
+        h1, h2 { color: var(--white); font-weight: 900; }
+        span.highlight { color: var(--cyan); text-shadow: 0 0 15px rgba(0,212,255,0.3); }
+
+        .hero-box { max-width: 700px; }
+        .hero-box h1 { font-size: clamp(45px, 8vw, 90px); line-height: 1; margin-bottom: 20px; }
+        .badge { display: inline-block; padding: 5px 12px; background: var(--purple); color: white; border-radius: 4px; font-size: 12px; margin-bottom: 15px; }
+
+        .card {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px; border-radius: 12px; backdrop-filter: blur(10px);
+            margin-bottom: 20px; transition: 0.3s;
+        }
+        .card:hover { border-color: var(--cyan); transform: translateY(-5px); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin: 30px 0; }
+        .stat-item { text-align: center; }
+        .stat-num { display: block; font-size: 35px; font-weight: 900; color: var(--cyan); font-family: 'Rajdhani'; }
+
+        /* Timeline Style */
+        .timeline { border-right: 2px solid var(--cyan); padding-right: 30px; margin-right: 10px; }
+        .timeline-item { position: relative; margin-bottom: 40px; }
+        .timeline-item::before {
+            content: ''; position: absolute; right: -41px; top: 10px;
+            width: 20px; height: 20px; background: var(--bg); border: 3px solid var(--cyan); border-radius: 50%;
+        }
+
+        .skills-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .skill-tag { background: rgba(0, 212, 255, 0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 4px 12px; border-radius: 4px; font-size: 13px; }
+
+        .contact-btns { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 30px; }
+        .btn { padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .btn-main { background: var(--cyan); color: var(--bg); }
+        .btn-sub { border: 1px solid var(--cyan); color: var(--cyan); }
+        .btn:hover { box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); transform: scale(1.05); }
+
+        .social-footer { display: flex; gap: 20px; margin-top: 40px; font-size: 24px; }
+        .social-footer a { color: var(--text); transition: 0.3s; }
+        .social-footer a:hover { color: var(--cyan); }
+
+        @media (max-width: 768px) {
+            .robot-scene img { width: 300px; opacity: 0.4; }
+            section { padding: 100px 5%; text-align: center; }
+            .timeline { border-right: none; padding-right: 0; }
+            .timeline-item::before { display: none; }
+            .contact-btns { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid"></div>
+
+    <div class="robot-scene">
+        <img src="https://i.ibb.co/vzY86mY/robot-main.png" id="mainRobot" alt="Mostafa Robot">
+    </div>
+
+    <nav>
+        <div class="logo">M.ASHRAF_</div>
+        <div class="status"><i class="fas fa-bolt"></i> متاح للعمل الحر</div>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-box">
+            <div class="badge">مطور برمجيات & خبير ذكاء اصطناعي</div>
+            <h1 class="reveal">أنا <span class="highlight">مصطفى أشرف</span></h1>
+            <p class="reveal" style="font-size: 1.2rem; color: var(--white);">
+                أبني أشياء حقيقية تعمل. أستكشف التقنيات الجديدة وأحول الأفكار إلى حلول برمجية متقدمة.
+            </p>
+            <div class="stats-grid reveal">
+                <div class="stat-item"><span class="stat-num">+7</span> سنوات خبرة</div>
+                <div class="stat-item"><span class="stat-num">+250</span> مشروع منجز</div>
+                <div class="stat-item"><span class="stat-num">∞</span> شغف بالتعلم</div>
+            </div>
+            <div class="contact-btns reveal">
+                <a href="https://wa.me/201227401622" class="btn btn-main"><i class="fab fa-whatsapp"></i> تواصل معي</a>
+                <a href="#about" class="btn btn-sub">من أنا؟</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div style="max-width: 800px; margin-right: auto;">
+            <h2 class="reveal">نبذة <span class="highlight">عني</span></h2>
+            <div class="card reveal">
+                مطور برمجيات شغوف بالتكنولوجيا والابتكار، أسعى دائماً لتطوير حلول تقنية متقدمة. ولدت في 1 أغسطس 2009، وأمتلك خبرة واسعة في مجالات البرمجة والأمن السيبراني والعملات الرقمية. أعمل على تطوير مشاريع متنوعة تشمل تطبيقات الويب والهواتف الذكية، مع التركيز على الأمن والكفاءة.
+            </div>
+            <div class="skills-container reveal">
+                <div class="skill-tag">Python</div>
+                <div class="skill-tag">تطوير الويب</div>
+                <div class="skill-tag">تطبيقات الهواتف</div>
+                <div class="skill-tag">الأمن السيبراني</div>
+                <div class="skill-tag">الروبوتات</div>
+                <div class="skill-tag">الذكاء الاصطناعي</div>
+                <div class="skill-tag">العملات الرقمية</div>
+                <div class="skill-tag">الأتمتة</div>
+            </div>
+            <p class="reveal" style="margin-top: 20px;"><i class="fas fa-gamepad"></i> أحب ألعاب الفيديو والقهوة ☕</p>
+        </div>
+    </section>
+
+    <section id="journey">
+        <h2 class="reveal">رحلتي <span class="highlight">التقنية</span></h2>
+        <div class="timeline">
+            <div class="timeline-item reveal">
+                <h3>بداية الرحلة (السنة 1 & 2)</h3>
+                <p>تعلم برمجة الروبوتات، الأنظمة المدمجة، وعالم الإلكترونيات المثير.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h3>توسيع الآفاق (السنة 3)</h3>
+                <p>إتقان تطوير مواقع الويب الثابتة وبناء واجهات المستخدم.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h3>الاحتراف (السنة 4)</h3>
+                <p>التعمق في لغة Python وبرمجة تطبيقات الهواتف الذكية.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <h3>المستقبل (السنة 5)</h3>
+                <p>دخول عالم الذكاء الاصطناعي، الأتمتة، والعملات الرقمية (Blockchain).</p>
+            </div>
+            <div class="timeline-item reveal" style="border: 1px solid var(--accent); padding: 15px; border-radius: 8px;">
+                <h3>الحاضر ✨</h3>
+                <p>التركيز على تطوير الذات، تقوية المهارات، واستكشاف كل ما هو جديد في التقنية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="reveal">لنعمل <span class="highlight">سوياً</span></h2>
+        <div class="card reveal" style="max-width: 600px;">
+            <p><i class="fas fa-envelope"></i> maldwshy000@gmail.com</p>
+            <p><i class="fas fa-phone"></i> 01227401622</p>
+            <div class="social-footer">
+                <a href="https://github.com/Mostafa-ashraf799" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/مصطفى-اشرف-الدعوشي-74a434358" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/share/1A4Dvfu3PN/" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://t.me/malimalimalih" target="_blank"><i class="fab fa-telegram"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // تحريك الروبوت مع السكرول
+        gsap.to("#mainRobot", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1.5,
+            },
+            rotateY: 360,
+            y: 50,
+            scale: 1.1,
+            filter: "drop-shadow(0 0 60px rgba(124, 58, 237, 0.7))"
+        });
+
+        // تأثير الظهور التدريجي للعناصر
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 90%",
+                },
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // حركة طفو بسيطة للروبوت
+        gsap.to("#mainRobot", {
+            y: -15,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+    </script>
+</body>
+</html>
