@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مصطفى أشرف | مطور برمجيات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#060a10; --bg2:#0b1118;
+    --accent:#00d4ff; --accent2:#7c3aed;
+    --green:#22c55e; --text:#dde6f0;
+    --muted:#4e6070; --card:rgba(11,17,24,0.9);
+    --border:rgba(0,212,255,0.12);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+  .cursor{width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:screen;}
+  .cursor-ring{width:34px;height:34px;border:1.5px solid rgba(0,212,255,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;}
+  #hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  #three-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .hero-content{position:relative;z-index:10;text-align:center;pointer-events:none;padding:0 20px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);border-radius:50px;padding:6px 20px;font-size:13px;color:var(--accent);letter-spacing:1.5px;margin-bottom:24px;animation:fadeUp 0.9s ease both;}
+  .badge-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;box-shadow:0 0 0 3px rgba(34,197,94,0.2);}
+  .hero-name{font-size:clamp(3.5rem,10vw,8rem);font-weight:900;line-height:0.95;background:linear-gradient(135deg,#fff 0%,#a8e6ff 40%,var(--accent) 70%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp 0.9s 0.15s ease both;margin-bottom:16px;}
+  .hero-role{font-family:'Space Mono',monospace;font-size:clamp(0.7rem,1.8vw,1rem);color:var(--muted);letter-spacing:4px;text-transform:uppercase;animation:fadeUp 0.9s 0.3s ease both;margin-bottom:36px;}
+  .hero-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.9s 0.45s ease both;}
+  .chip{background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);color:#c4b5fd;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .chip img{width:16px;height:16px;object-fit:contain;filter:brightness(1.2);}
+  .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:11px;letter-spacing:2px;z-index:10;animation:fadeUp 0.9s 1.2s ease both;}
+  .scroll-mouse{width:22px;height:38px;border:2px solid rgba(0,212,255,0.25);border-radius:11px;position:relative;}
+  .scroll-mouse::after{content:'';width:4px;height:8px;background:var(--accent);border-radius:2px;position:absolute;top:6px;left:50%;transform:translateX(-50%);animation:scrollAnim 1.5s infinite;}
+  @keyframes scrollAnim{0%{top:6px;opacity:1}100%{top:20px;opacity:0}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.3;}
+  .section-wrap{padding:110px 5%;}
+  .section-inner{max-width:1200px;margin:0 auto;}
+  .section-bg{background:var(--bg2);}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+  .eyebrow::after{content:'';flex:1;height:1px;background:var(--border);}
+  .section-h{font-size:clamp(2rem,5vw,3.8rem);font-weight:800;line-height:1.05;margin-bottom:56px;}
+  .accent-c{color:var(--accent);}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
+  .about-text p{font-size:1.05rem;line-height:1.95;color:#8aa0b8;margin-bottom:18px;}
+  .stats-row{display:flex;gap:48px;margin-top:36px;}
+  .stat-num{font-family:'Space Mono',monospace;font-size:2.8rem;font-weight:700;color:var(--accent);display:block;}
+  .stat-label{font-size:12px;color:var(--muted);letter-spacing:1px;margin-top:4px;}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden;}
+  .info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+  .chips-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+  .interest-chip{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.12);border-radius:8px;padding:8px 14px;font-size:13px;display:flex;align-items:center;gap:7px;}
+  .interest-chip img{width:16px;height:16px;object-fit:contain;}
+  .meta-list{display:grid;gap:12px;font-size:14px;color:#6a88a4;margin-top:22px;}
+  .meta-list strong{color:var(--text);}
+  .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+  .skill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all 0.3s ease;position:relative;overflow:hidden;}
+  .skill-card:hover{border-color:rgba(0,212,255,0.4);transform:translateY(-5px);box-shadow:0 24px 64px rgba(0,212,255,0.08);}
+  .skill-icon{width:40px;height:40px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;}
+  .skill-icon img{width:100%;height:100%;object-fit:contain;}
+  .skill-name{font-size:1rem;font-weight:700;margin-bottom:6px;}
+  .skill-desc{font-size:13px;color:var(--muted);line-height:1.65;}
+  .skill-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:1px;margin-top:16px;overflow:hidden;}
+  .skill-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:1px;width:0;transition:width 1.3s cubic-bezier(.4,0,.2,1);}
+  .timeline{position:relative;padding-right:48px;}
+  .timeline::before{content:'';position:absolute;right:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--border) 10%,var(--border) 90%,transparent);}
+  .tl-item{position:relative;padding-right:48px;padding-bottom:56px;}
+  .tl-dot{position:absolute;right:-6px;top:5px;width:13px;height:13px;background:var(--bg2);border:2px solid var(--accent);border-radius:50%;box-shadow:0 0 0 4px rgba(0,212,255,0.12),0 0 20px rgba(0,212,255,0.3);}
+  .tl-year{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;}
+  .tl-title{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+  .tl-desc{font-size:14px;color:#5a7a94;line-height:1.75;}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  .contact-links{display:flex;flex-direction:column;gap:12px;}
+  .contact-link{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;text-decoration:none;color:var(--text);transition:all 0.3s ease;font-size:14px;}
+  .contact-link:hover{border-color:rgba(0,212,255,0.35);background:rgba(0,212,255,0.04);transform:translateX(-6px);}
+  .c-icon{width:42px;height:42px;border-radius:10px;background:rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .c-icon img{width:24px;height:24px;object-fit:contain;}
+  .c-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  .c-val{font-weight:600;direction:ltr;text-align:right;font-size:13px;margin-top:1px;}
+  .avail-box{background:linear-gradient(135deg,rgba(11,17,24,0.9),rgba(0,212,255,0.04));border:1px solid rgba(0,212,255,0.2);border-radius:16px;padding:36px;}
+  .avail-head{font-size:1.35rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .avail-dot{width:10px;height:10px;background:var(--green);border-radius:50%;flex-shrink:0;animation:pulse 1.5s infinite;box-shadow:0 0 0 4px rgba(34,197,94,0.15);}
+  .avail-text{color:#5a7a94;font-size:14px;line-height:1.85;}
+  .avail-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;}
+  .avail-tag{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);color:#86efac;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .avail-tag::before{content:"✓";font-size:10px;}
+  footer{text-align:center;padding:48px 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);}
+  .reveal{opacity:0;transform:translateY(50px);transition:opacity 0.85s ease,transform 0.85s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.022;pointer-events:none;z-index:9997;}
+  #model-loading{position:absolute;bottom:20px;right:20px;z-index:20;font-family:'Space Mono',monospace;font-size:11px;color:rgba(0,212,255,0.5);letter-spacing:2px;}
+  .robot-status{position:absolute;bottom:20px;left:20px;z-index:20;display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(0,212,255,0.6);}
+  .robot-status-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;}
+  @media(max-width:768px){.about-grid,.contact-grid{grid-template-columns:1fr;}.stats-row{gap:24px;}.skills-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div id="model-loading">جاري تحميل الروبوت 3D...</div>
+  <div class="robot-status"><span class="robot-status-dot"></span>الروبوت يتفاعل مع حركة الماوس</div>
+  <div class="hero-content">
+    <div class="badge"><span class="badge-dot"></span>متاح للعمل الحر &nbsp;·&nbsp; منفتح على الفرص</div>
+    <h1 class="hero-name">مصطفى أشرف</h1>
+    <p class="hero-role">Software Developer &nbsp;·&nbsp; Builder &nbsp;·&nbsp; Innovator</p>
+    <div class="hero-chips">
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="Python"> Python</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/15/15579.png" alt="Mobile"> Mobile</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/2210/2210153.png" alt="Web"> Web Dev</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/8687/8687801.png" alt="AI"> AI & ML</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/2092/2092663.png" alt="Security"> Cybersecurity</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/6134/6134347.png" alt="Blockchain"> Blockchain</span>
+      <span class="chip"><img src="https://cdn-icons-png.flaticon.com/512/8365/8365176.png" alt="Robotics"> Robotics</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-mouse"></div>
+    <span>اسكرول للأسفل</span>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<div class="section-wrap">
+<div class="section-inner">
+  <div class="eyebrow">نبذة عني</div>
+  <h2 class="section-h">مطور شغوف<br><span class="accent-c">بالتكنولوجيا</span></h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>مطور برمجيات شغوف بالتكنولوجيا والابتكار، أسعى دائماً لتطوير حلول تقنية متقدمة. ولدت في 1 أغسطس 2009، وأمتلك خبرة واسعة في مجالات البرمجة والأمن السيبراني والعملات الرقمية.</p>
+      <p>أعمل على تطوير مشاريع متنوعة تشمل تطبيقات الويب والهواتف الذكية، مع التركيز على الأمن والكفاءة. أحب القهوة وألعاب الفيديو، وأستمتع باستكشاف التقنيات الجديدة وبناء أشياء حقيقية تعمل.</p>
+      <div class="stats-row">
+        <div class="stat"><span class="stat-num" data-target="7" data-prefix="+">+7</span><div class="stat-label">سنوات خبرة</div></div>
+        <div class="stat"><span class="stat-num" data-target="250" data-prefix="+">+250</span><div class="stat-label">مشروع منجز</div></div>
+        <div class="stat"><span class="stat-num" data-target="10" data-prefix="+">+10</span><div class="stat-label">مجالات تقنية</div></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="info-card">
+        <div class="eyebrow" style="margin-bottom:14px">الاهتمامات</div>
+        <div class="chips-grid">
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/751/751621.png" alt="Coffee"> القهوة</span>
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png" alt="Gaming"> ألعاب الفيديو</span>
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/3659/3659898.png" alt="Tech"> استكشاف التقنيات</span>
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/4009/4009983.png" alt="Building"> بناء أشياء حقيقية</span>
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/3659/3659899.png" alt="Learning"> التعلم المستمر</span>
+          <span class="interest-chip"><img src="https://cdn-icons-png.flaticon.com/512/10393/10393712.png" alt="Innovation"> الابتكار</span>
+        </div>
+        <div class="meta-list">
+          <div><strong>📅 تاريخ الميلاد:</strong> 1 أغسطس 2009</div>
+          <div><strong>🌍 الموقع:</strong> مصر</div>
+          <div><strong>💼 الحالة:</strong> <strong style="color:var(--green)">متاح للعمل الحر ✓</strong></div>
+          <div><strong>🚀 الوضع:</strong> <strong style="color:var(--accent)">منفتح على الفرص</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="glow-line"></div>
+
+<div class="section-wrap section-bg">
+<div class="section-inner">
+  <div class="eyebrow">المهارات التقنية</div>
+  <h2 class="section-h">ما <span class="accent-c">أُجيده</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="Python"></div>
+      <div class="skill-name">Python</div>
+      <div class="skill-desc">برمجة متقدمة لبناء التطبيقات ومعالجة البيانات والأتمتة</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="95"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/15/15579.png" alt="Mobile"></div>
+      <div class="skill-name">تطبيقات الهواتف</div>
+      <div class="skill-desc">تطوير تطبيقات ذكية لـ Android وiOS بأعلى معايير الجودة</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="85"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/2210/2210153.png" alt="Web"></div>
+      <div class="skill-name">تطوير الويب</div>
+      <div class="skill-desc">بناء مواقع وتطبيقات ويب حديثة وتفاعلية متجاوبة</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="90"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/2092/2092663.png" alt="Security"></div>
+      <div class="skill-name">الأمن السيبراني</div>
+      <div class="skill-desc">اختبار الاختراق وتأمين الأنظمة وحماية البيانات والشبكات</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="88"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/8687/8687801.png" alt="AI"></div>
+      <div class="skill-name">الذكاء الاصطناعي</div>
+      <div class="skill-desc">تطوير نماذج ML وDeep Learning وتطبيقات AI عملية</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="82"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/3662/3662817.png" alt="Automation"></div>
+      <div class="skill-name">الأتمتة</div>
+      <div class="skill-desc">أتمتة المهام وبناء سكريبتات ذكية موفرة للوقت والجهد</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="92"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/8365/8365176.png" alt="Robotics"></div>
+      <div class="skill-name">الروبوتات والإلكترونيات</div>
+      <div class="skill-desc">تصميم وبرمجة الروبوتات والأنظمة المدمجة والدوائر الإلكترونية</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="80"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/6134/6134347.png" alt="Blockchain"></div>
+      <div class="skill-name">العملات الرقمية</div>
+      <div class="skill-desc">تطوير Blockchain وعقود ذكية ومحافظ وتطبيقات DeFi</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="78"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon"><img src="https://cdn-icons-png.flaticon.com/512/2702/2702602.png" alt="Google Cloud"></div>
+      <div class="skill-name">خدمات Google</div>
+      <div class="skill-desc">Google Cloud وFirebase وWorkspace APIs وأدوات Google المتقدمة</div>
+      <div class="skill-bar"><div class="skill-fill" data-w="85"></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="glow-line"></div>
+
+<div class="section-wrap">
+<div class="section-inner">
+  <div class="eyebrow">مسيرتي</div>
+  <h2 class="section-h">رحلة <span class="accent-c">7 سنوات</span></h2>
+  <div class="timeline reveal">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">السنتان الأولى والثانية</div><div class="tl-title">🔧 الروبوتات والأنظمة المدمجة والإلكترونيات</div><div class="tl-desc">بدأت بتعلم أساسيات الإلكترونيات وبرمجة الأنظمة المدمجة والروبوتات، مما أعطاني فهماً عميقاً لكيفية عمل الأجهزة والبرمجيات معاً.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">السنة الثالثة</div><div class="tl-title">🌐 تطوير الويب</div><div class="tl-desc">تعمقت في تطوير مواقع الويب، إتقان HTML وCSS وJavaScript وبناء واجهات مستخدم جميلة ومتجاوبة.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">السنة الرابعة</div><div class="tl-title">🐍 Python وتطبيقات الهواتف</div><div class="tl-desc">توسعت لأتعلم Python بعمق وتطوير تطبيقات الهواتف الذكية، مما فتح أمامي أبواباً واسعة لبناء حلول متنوعة ومتكاملة.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">السنة الخامسة</div><div class="tl-title">🤖 الذكاء الاصطناعي والأتمتة والبلوكتشين</div><div class="tl-desc">دخلت عالم AI والتعلم الآلي، مع تعمق في الأتمتة الذكية وتقنيات البلوكتشين والعملات الرقمية.</div></div>
+    <div class="tl-item" style="padding-bottom:0"><div class="tl-dot" style="background:var(--accent);border-color:var(--accent2)"></div><div class="tl-year" style="color:var(--green)">الآن — 2026 ⚡</div><div class="tl-title">🚀 التطوير والتحسين المستمر</div><div class="tl-desc">أقضي هذه المرحلة في تعزيز مهاراتي وتوسيع معرفتي، وإكمال مشاريع أكبر وأكثر تأثيراً في عالم التقنية.</div></div>
+  </div>
+</div>
+</div>
+
+<div class="glow-line"></div>
+
+<div class="section-wrap section-bg">
+<div class="section-inner">
+  <div class="eyebrow">تواصل معي</div>
+  <h2 class="section-h">لنبني شيئاً <span class="accent-c">معاً</span></h2>
+  <div class="contact-grid">
+    <div class="contact-links reveal">
+      <a class="contact-link" href="tel:01227401622">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/126/126341.png" alt="Phone"></div>
+        <div style="flex:1"><div class="c-label">الهاتف</div><div class="c-val">01227401622</div></div>
+      </a>
+      <a class="contact-link" href="https://wa.me/201227401622" target="_blank">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"></div>
+        <div style="flex:1"><div class="c-label">واتساب</div><div class="c-val">01227401622</div></div>
+      </a>
+      <a class="contact-link" href="https://t.me/malimalimalih" target="_blank">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram"></div>
+        <div style="flex:1"><div class="c-label">تيليجرام</div><div class="c-val">@malimalimalih</div></div>
+      </a>
+      <a class="contact-link" href="mailto:maldwshy000@gmail.com">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/542/542689.png" alt="Email"></div>
+        <div style="flex:1"><div class="c-label">البريد الإلكتروني</div><div class="c-val">maldwshy000@gmail.com</div></div>
+      </a>
+      <a class="contact-link" href="https://github.com/Mostafa-ashraf799" target="_blank">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub"></div>
+        <div style="flex:1"><div class="c-label">GitHub</div><div class="c-val">Mostafa-ashraf799</div></div>
+      </a>
+      <a class="contact-link" href="https://www.linkedin.com/in/%D9%85%D8%B5%D8%B7%D9%81%D9%89-%D8%A7%D8%B4%D8%B1%D9%81-%D8%A7%D9%84%D8%AF%D8%B9%D9%88%D8%B4%D9%8A-74a434358" target="_blank">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn"></div>
+        <div style="flex:1"><div class="c-label">LinkedIn</div><div class="c-val">مصطفى أشرف الدعوشي</div></div>
+      </a>
+      <a class="contact-link" href="https://www.facebook.com/share/1A4Dvfu3PN/" target="_blank">
+        <div class="c-icon"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></div>
+        <div style="flex:1"><div class="c-label">فيسبوك</div><div class="c-val">مصطفى أشرف</div></div>
+      </a>
+    </div>
+    <div class="reveal">
+      <div class="avail-box">
+        <div class="avail-head"><span class="avail-dot"></span>متاح للعمل الحر</div>
+        <p class="avail-text">أنا حالياً متاح لمشاريع العمل الحر والتعاون التقني. إذا كنت تبحث عن مطور شغوف ومتعدد المهارات لتحويل أفكارك إلى واقع، تواصل معي الآن!</p>
+        <div class="avail-tags">
+          <span class="avail-tag">مشاريع الويب</span>
+          <span class="avail-tag">تطبيقات الموبايل</span>
+          <span class="avail-tag">حلول AI</span>
+          <span class="avail-tag">أمن سيبراني</span>
+          <span class="avail-tag">أتمتة</span>
+          <span class="avail-tag">بلوكتشين</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <p style="font-family:'Cairo';margin-bottom:8px;font-size:16px">صُنع بـ <span style="color:#ff4757">❤️</span> من مصطفى أشرف</p>
+  <p>© 2026 Mostafa Ashraf · All Rights Reserved</p>
+</footer>
+
+<!-- UI Scripts -->
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.transform=`translate(${mx-5}px,${my-5}px)`;});
+(function ar(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.transform=`translate(${rx-17}px,${ry-17}px)`;requestAnimationFrame(ar);})();
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const bIO=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.style.width=x.target.dataset.w+'%';bIO.unobserve(x.target);}}),{threshold:.5});
+document.querySelectorAll('.skill-fill').forEach(b=>bIO.observe(b));
+function countUp(el,target){const s=performance.now(),d=1800,p=el.dataset.prefix||'';(function step(n){const pr=Math.min((n-s)/d,1),e=1-Math.pow(1-pr,3);el.textContent=p+Math.floor(e*target);if(pr<1)requestAnimationFrame(step);})(s);}
+const sIO=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.querySelectorAll('.stat-num').forEach(el=>countUp(el,parseInt(el.dataset.target)));sIO.unobserve(x.target);}}),{threshold:.5});
+const sr=document.querySelector('.stats-row');if(sr)sIO.observe(sr);
+</script>
+
+<!-- THREE.JS - Fixed 3D Robot -->
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js';
+
+const loadingEl = document.getElementById('model-loading');
+const canvas = document.getElementById('three-canvas');
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.4;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 8);
+
+// Lights
+const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambient);
+
+const dL1 = new THREE.DirectionalLight(0x00d4ff, 2);
+dL1.position.set(5, 5, 5); 
+scene.add(dL1);
+
+const dL2 = new THREE.DirectionalLight(0x7c3aed, 1.5);
+dL2.position.set(-5, -3, -3); 
+scene.add(dL2);
+
+const pL = new THREE.PointLight(0x00d4ff, 1.5, 20);
+pL.position.set(0, 3, 3); 
+scene.add(pL);
+
+// Create Procedural Robot
+const robotGroup = new THREE.Group();
+
+// Materials
+const bodyMaterial = new THREE.MeshStandardMaterial({
+  color: 0x2a3b4c,
+  metalness: 0.8,
+  roughness: 0.2,
+});
+
+const jointMaterial = new THREE.MeshStandardMaterial({
+  color: 0x00d4ff,
+  metalness: 0.9,
+  roughness: 0.1,
+  emissive: 0x00d4ff,
+  emissiveIntensity: 0.2
+});
+
+const glowMaterial = new THREE.MeshStandardMaterial({
+  color: 0x7c3aed,
+  metalness: 0.5,
+  roughness: 0.3,
+  emissive: 0x7c3aed,
+  emissiveIntensity: 0.4
+});
+
+// Robot Head
+const headGeometry = new THREE.BoxGeometry(1.2, 1, 1.2);
+const head = new THREE.Mesh(headGeometry, bodyMaterial);
+head.position.y = 2.5;
+robotGroup.add(head);
+
+// Eyes
+const eyeGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+const leftEye = new THREE.Mesh(eyeGeometry, glowMaterial);
+leftEye.position.set(-0.3, 2.6, 0.6);
+robotGroup.add(leftEye);
+
+const rightEye = new THREE.Mesh(eyeGeometry, glowMaterial);
+rightEye.position.set(0.3, 2.6, 0.6);
+robotGroup.add(rightEye);
+
+// Robot Body
+const bodyGeometry = new THREE.CylinderGeometry(0.8, 0.6, 2, 8);
+const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+body.position.y = 0.8;
+robotGroup.add(body);
+
+// Chest Core
+const coreGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
+const core = new THREE.Mesh(coreGeometry, glowMaterial);
+core.rotation.x = Math.PI / 2;
+core.position.set(0, 1.2, 0.65);
+robotGroup.add(core);
+
+// Shoulders
+const shoulderGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+const leftShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
+leftShoulder.position.set(-1, 1.8, 0);
+robotGroup.add(leftShoulder);
+
+const rightShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
+rightShoulder.position.set(1, 1.8, 0);
+robotGroup.add(rightShoulder);
+
+// Arms
+const armGeometry = new THREE.CylinderGeometry(0.15, 0.12, 1.5, 8);
+const leftArm = new THREE.Mesh(armGeometry, bodyMaterial);
+leftArm.position.set(-1.3, 0.8, 0);
+leftArm.rotation.z = 0.3;
+robotGroup.add(leftArm);
+
+const rightArm = new THREE.Mesh(armGeometry, bodyMaterial);
+rightArm.position.set(1.3, 0.8, 0);
+rightArm.rotation.z = -0.3;
+robotGroup.add(rightArm);
+
+// Hands
+const handGeometry = new THREE.BoxGeometry(0.3, 0.4, 0.3);
+const leftHand = new THREE.Mesh(handGeometry, jointMaterial);
+leftHand.position.set(-1.5, 0, 0);
+robotGroup.add(leftHand);
+
+const rightHand = new THREE.Mesh(handGeometry, jointMaterial);
+rightHand.position.set(1.5, 0, 0);
+robotGroup.add(rightHand);
+
+// Hips
+const hipGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 8);
+const hips = new THREE.Mesh(hipGeometry, jointMaterial);
+hips.position.y = -0.3;
+robotGroup.add(hips);
+
+// Legs
+const legGeometry = new THREE.CylinderGeometry(0.2, 0.15, 1.8, 8);
+const leftLeg = new THREE.Mesh(legGeometry, bodyMaterial);
+leftLeg.position.set(-0.4, -1.2, 0);
+robotGroup.add(leftLeg);
+
+const rightLeg = new THREE.Mesh(legGeometry, bodyMaterial);
+rightLeg.position.set(0.4, -1.2, 0);
+robotGroup.add(rightLeg);
+
+// Feet
+const footGeometry = new THREE.BoxGeometry(0.4, 0.2, 0.6);
+const leftFoot = new THREE.Mesh(footGeometry, jointMaterial);
+leftFoot.position.set(-0.4, -2.2, 0.1);
+robotGroup.add(leftFoot);
+
+const rightFoot = new THREE.Mesh(footGeometry, jointMaterial);
+rightFoot.position.set(0.4, -2.2, 0.1);
+robotGroup.add(rightFoot);
+
+// Antenna
+const antennaGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.8, 8);
+const antenna = new THREE.Mesh(antennaGeometry, jointMaterial);
+antenna.position.set(0, 3.2, 0);
+robotGroup.add(antenna);
+
+const antennaTipGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+const antennaTip = new THREE.Mesh(antennaTipGeometry, glowMaterial);
+antennaTip.position.set(0, 3.6, 0);
+robotGroup.add(antennaTip);
+
+// Add robot to scene
+scene.add(robotGroup);
+
+// Hide loading
+loadingEl.style.display = 'none';
+
+// Animation variables
+let time = 0;
+let mouseX = 0;
+let mouseY = 0;
+let targetRotationX = 0;
+let targetRotationY = 0;
+
+// Mouse tracking
+document.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+});
+
+// Animation loop
+function animate() {
+  requestAnimationFrame(animate);
+
+  time += 0.01;
+
+  // Floating animation
+  robotGroup.position.y = Math.sin(time) * 0.2;
+
+  // Breathing animation
+  robotGroup.scale.y = 1 + Math.sin(time * 2) * 0.02;
+  robotGroup.scale.x = 1 + Math.cos(time * 2) * 0.01;
+
+  // Smooth mouse following
+  targetRotationY = mouseX * 0.5;
+  targetRotationX = mouseY * 0.3;
+
+  robotGroup.rotation.y += (targetRotationY - robotGroup.rotation.y) * 0.05;
+  robotGroup.rotation.x += (targetRotationX - robotGroup.rotation.x) * 0.05;
+
+  // Arm swaying
+  leftArm.rotation.z = 0.3 + Math.sin(time * 1.5) * 0.1;
+  rightArm.rotation.z = -0.3 - Math.sin(time * 1.5 + Math.PI) * 0.1;
+
+  // Core pulsing
+  const pulse = 1 + Math.sin(time * 3) * 0.2;
+  core.scale.set(pulse, pulse, 1);
+  core.material.emissiveIntensity = 0.4 + Math.sin(time * 3) * 0.3;
+
+  // Antenna glow
+  antennaTip.material.emissiveIntensity = 0.4 + Math.sin(time * 4) * 0.3;
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// Handle resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
